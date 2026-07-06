@@ -9,26 +9,17 @@ layers, but changes the defaults where the usual output invites overreading.
 
 ## Install
 
-This package is currently a local/GitHub-stage prototype.
-
-Install from a local checkout:
+Install the development version from GitHub:
 
 ```r
-install.packages("devtools")
-devtools::install("/path/to/linear_model_package")
+install.packages("remotes")
+remotes::install_github("yanivjb/honestlm")
 ```
 
-Or, while developing from this folder:
+If you are working from a local checkout, load the package during development with:
 
 ```r
 devtools::load_all()
-```
-
-Once pushed to GitHub, install with:
-
-```r
-# replace USERNAME with the GitHub account or organization
-devtools::install_github("USERNAME/honestlm")
 ```
 
 Run the checks locally with:
