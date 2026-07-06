@@ -1,0 +1,29 @@
+Package: honestlm
+Title: Guardrails for Teaching Linear Models
+Version: 0.0.0.9000
+Authors@R:
+    person("Yaniv", "Brandvain", role = c("aut", "cre"),
+           email = "ybrandva@umn.edu")
+Description: Provides small, opinionated wrappers around familiar linear model
+    workflows. The package keeps base R and ggplot2 interfaces recognizable
+    while adding guardrails around common interpretation traps, including
+    coefficient p-values for multi-level categorical predictors, sequential
+    Type I sums of squares, and plots whose summaries do not match the fitted
+    linear model.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports:
+    generics,
+    ggplot2,
+    stats,
+    utils
+Suggests:
+    broom,
+    knitr,
+    palmerpenguins,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
+VignetteBuilder: knitr

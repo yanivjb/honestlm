@@ -1,0 +1,77 @@
+---
+title: "Using honestlm"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using honestlm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+`honestlm` keeps familiar linear model workflows, but adds guardrails around
+common interpretation traps.
+
+```{r setup}
+library(honestlm)
+```
+
+## Summaries
+
+`honest_lm()` fits a regular `lm()` object with an extra class. The estimates
+are ordinary linear-model estimates, but the printed summary hides coefficient
+p-values by default.
+
+```{r summary}
+fit <- honest_lm(mpg ~ wt + factor(cyl), data = mtcars)
+summary(fit)
+```
+
+For categorical predictors with more than two levels, coefficient rows are
+comparisons to a reference level. They are not separate tests of whether each
+category, or the whole predictor, matters. For post-hoc comparisons among
+levels, estimated marginal means are usually a better tool.
+
+## Sequential sums of squares
+
+Base `anova()` for linear models reports sequential Type I sums of squares.
+`honestlm` leaves the table intact but warns about the interpretation.
+
+```{r anova}
+anova(fit)
+```
+
+## Broom output
+
+If `broom` is installed, `tidy()` removes `p.value` by default and adds a
+`contrast_note` column for factor contrast rows.
+
+```{r broom, eval = requireNamespace("broom", quietly = TRUE)}
+broom::tidy(fit)
+```
+
+## Model-aware plots
+
+`geom_lm_smooth()` and `stat_lm_means()` are designed to make plots match the
+linear model structure being taught.
+
+```{r plots, eval = requireNamespace("ggplot2", quietly = TRUE)}
+library(ggplot2)
+
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point() +
+  geom_lm_smooth(interaction = FALSE)
+
+ggplot(mtcars, aes(factor(cyl), mpg, colour = factor(am))) +
+  geom_point() +
+  stat_lm_means(interaction = FALSE)
+```
+
+Set `interaction = TRUE` when you want separate slopes or full cell means.

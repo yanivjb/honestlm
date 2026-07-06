@@ -1,0 +1,106 @@
+# honestlm
+
+`honestlm` keeps familiar linear model workflows, but adds guardrails around
+common interpretation traps.
+
+The package is intentionally small. It starts from ordinary `lm()` models and
+keeps familiar verbs like `summary()`, `anova()`, `broom::tidy()`, and ggplot2
+layers, but changes the defaults where the usual output invites overreading.
+
+## Install
+
+This package is currently a local/GitHub-stage prototype.
+
+Install from a local checkout:
+
+```r
+install.packages("devtools")
+devtools::install("/path/to/linear_model_package")
+```
+
+Or, while developing from this folder:
+
+```r
+devtools::load_all()
+```
+
+Once pushed to GitHub, install with:
+
+```r
+# replace USERNAME with the GitHub account or organization
+devtools::install_github("USERNAME/honestlm")
+```
+
+Run the checks locally with:
+
+```r
+devtools::test()
+devtools::check(document = FALSE, manual = FALSE)
+```
+
+## Safer summaries
+
+```r
+library(honestlm)
+library(palmerpenguins)
+
+fit <- honest_lm(
+  bill_length_mm ~ bill_depth_mm + species,
+  data = penguins
+)
+
+summary(fit)
+```
+
+By default, coefficient p-values are hidden. For categorical predictors with
+more than two levels, `summary()` warns that the coefficient rows are comparisons
+to a reference level, not tests of whether each category or the whole predictor
+matters. The summary also points readers toward estimated marginal means for
+post-hoc comparisons.
+
+## Sequential sums of squares warning
+
+```r
+anova(fit)
+```
+
+For linear models, `anova()` reports sequential Type I sums of squares. These
+depend on the order of terms in the formula. `honestlm` leaves the table intact
+but warns about that interpretation trap.
+
+## Broom methods
+
+```r
+library(broom)
+
+tidy(fit)
+glance(fit)
+```
+
+`tidy()` removes `p.value` by default and adds a `contrast_note` column for
+factor contrasts. `glance()` removes the model-level `p.value` by default.
+
+## Model-aware plots
+
+```r
+library(ggplot2)
+
+ggplot(penguins, aes(bill_depth_mm, bill_length_mm, colour = species)) +
+  geom_point() +
+  geom_lm_smooth(interaction = FALSE)
+```
+
+`geom_lm_smooth(interaction = FALSE)` draws additive/parallel linear model
+smooths. Set `interaction = TRUE` to delegate to
+`ggplot2::geom_smooth(method = "lm")` for separate slopes by group.
+
+```r
+ggplot(penguins, aes(island, bill_length_mm, colour = species)) +
+  geom_point() +
+  stat_lm_means(interaction = FALSE) +
+  facet_wrap(~species)
+```
+
+`stat_lm_means()` draws model-predicted means rather than raw grouped means.
+This helps plots follow the same additive or interaction structure as the
+linear model.
