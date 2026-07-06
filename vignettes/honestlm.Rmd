@@ -62,7 +62,7 @@ broom::tidy(fit)
 `geom_lm_smooth()` and `stat_lm_means()` are designed to make plots match the
 linear model structure being taught.
 
-```{r plots, eval = requireNamespace("ggplot2", quietly = TRUE)}
+```{r plots}
 library(ggplot2)
 
 ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +

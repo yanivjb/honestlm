@@ -108,10 +108,9 @@ inside each panel. With \code{interaction = TRUE}, it delegates to
 slopes.
 }
 \examples{
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  library(ggplot2)
-  ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
-    geom_point() +
-    geom_lm_smooth()
-}
+library(ggplot2)
+
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point() +
+  geom_lm_smooth()
 }

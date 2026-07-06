@@ -144,10 +144,9 @@ A ggplot2 layer.
 ## Examples
 
 ``` r
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  library(ggplot2)
-  ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
-    geom_point() +
-    geom_lm_smooth()
-}
+library(ggplot2)
+
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point() +
+  geom_lm_smooth()
 ```

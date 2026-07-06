@@ -101,10 +101,9 @@ With two categorical predictors, \code{interaction = FALSE} fits an additive mod
 and \code{interaction = TRUE} fits the interaction model.
 }
 \examples{
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  library(ggplot2)
-  ggplot(mtcars, aes(factor(cyl), mpg, colour = factor(am))) +
-    geom_point() +
-    stat_lm_means()
-}
+library(ggplot2)
+
+ggplot(mtcars, aes(factor(cyl), mpg, colour = factor(am))) +
+  geom_point() +
+  stat_lm_means()
 }

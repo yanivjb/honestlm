@@ -19,12 +19,11 @@
 #' @export
 #'
 #' @examples
-#' if (requireNamespace("ggplot2", quietly = TRUE)) {
-#'   library(ggplot2)
-#'   ggplot(mtcars, aes(factor(cyl), mpg, colour = factor(am))) +
-#'     geom_point() +
-#'     stat_lm_means()
-#' }
+#' library(ggplot2)
+#'
+#' ggplot(mtcars, aes(factor(cyl), mpg, colour = factor(am))) +
+#'   geom_point() +
+#'   stat_lm_means()
 stat_lm_means <- function(mapping = NULL,
                           data = NULL,
                           geom = "pointrange",
