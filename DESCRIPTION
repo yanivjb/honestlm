@@ -11,6 +11,8 @@ Description: Provides small, opinionated wrappers around familiar linear model
     Type I sums of squares, and plots whose summaries do not match the fitted
     linear model.
 License: MIT + file LICENSE
+URL: https://yanivjb.github.io/honestlm/, https://github.com/yanivjb/honestlm
+BugReports: https://github.com/yanivjb/honestlm/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:

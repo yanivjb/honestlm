@@ -3,3 +3,5 @@
 ^README\.Rmd$
 ^\.Rproj\.user$
 ^honestlm\.Rproj$
+^_pkgdown\.yml$
+^docs$

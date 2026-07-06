@@ -3,6 +3,8 @@
 `honestlm` keeps familiar linear model workflows, but adds guardrails around
 common interpretation traps.
 
+Documentation site: <https://yanivjb.github.io/honestlm/>
+
 The package is intentionally small. It starts from ordinary `lm()` models and
 keeps familiar verbs like `summary()`, `anova()`, `broom::tidy()`, and ggplot2
 layers, but changes the defaults where the usual output invites overreading.

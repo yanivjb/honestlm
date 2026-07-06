@@ -1,0 +1,15 @@
+url: https://yanivjb.github.io/honestlm/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [github]
+
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - honestlm
