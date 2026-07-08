@@ -57,13 +57,24 @@ tool.
 
 ## Sequential sums of squares
 
-Base [`anova()`](https://rdrr.io/r/stats/anova.html) for linear models
-reports sequential Type I sums of squares. `honestlm` leaves the table
-intact but warns about the interpretation.
+Base [`anova()`](https://rdrr.io/r/stats/anova.html) for a single linear
+model with more than one predictor reports sequential Type I sums of
+squares. `honestlm` stops by default because those tables depend on the
+order of terms in the formula. For term-level tests, use
+`car::Anova(model, type = 2)` or use Type III sums of squares with care.
 
 ``` r
 
 anova(fit)
+#> Error:
+#> ! `anova()` for a single linear model with more than one predictor reports sequential Type I sums of squares. honestlm stops here because changing the order of terms can change the table. Use `car::Anova(model, type = 2)` for term-level tests, or type = 3 with care. If you really want Type I sums of squares, call `anova(model, beg = TRUE)`.
+```
+
+If you really want the Type I table, you can ask for it explicitly.
+
+``` r
+
+anova(fit, beg = TRUE)
 #> Analysis of Variance Table
 #> 
 #> Response: mpg

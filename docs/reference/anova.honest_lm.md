@@ -1,15 +1,16 @@
 # Analysis of variance for a guarded linear model
 
-This method returns the same sequential ANOVA table as
-[`stats::anova.lm()`](https://rdrr.io/r/stats/anova.lm.html), but warns
-that these are Type I sums of squares and therefore depend on term
-order.
+For a single predictor, this method returns the usual ANOVA table from
+[`stats::anova.lm()`](https://rdrr.io/r/stats/anova.lm.html). For models
+with more than one predictor, it stops by default because that table
+uses sequential Type I sums of squares, which depend on the order of
+terms in the formula.
 
 ## Usage
 
 ``` r
 # S3 method for class 'honest_lm'
-anova(object, ...)
+anova(object, ..., beg = FALSE)
 ```
 
 ## Arguments
@@ -21,6 +22,11 @@ anova(object, ...)
 - ...:
 
   Passed to [`stats::anova()`](https://rdrr.io/r/stats/anova.html).
+
+- beg:
+
+  Logical. Set to `TRUE` to explicitly request sequential Type I sums of
+  squares for a model with more than one predictor.
 
 ## Value
 

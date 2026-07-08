@@ -80,11 +80,14 @@
 <p>By default, coefficient p-values are hidden. For categorical predictors with more than two levels, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> warns that the coefficient rows are comparisons to a reference level, not tests of whether each category or the whole predictor matters. The summary also points readers toward estimated marginal means for post-hoc comparisons.</p>
 </div>
 <div class="section level2">
-<h2 id="sequential-sums-of-squares-warning">Sequential sums of squares warning<a class="anchor" aria-label="anchor" href="#sequential-sums-of-squares-warning"></a>
+<h2 id="sequential-sums-of-squares-guardrail">Sequential sums of squares guardrail<a class="anchor" aria-label="anchor" href="#sequential-sums-of-squares-guardrail"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
-<p>For linear models, <code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova()</a></code> reports sequential Type I sums of squares. These depend on the order of terms in the formula. <code>honestlm</code> leaves the table intact but warns about that interpretation trap.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: `anova()` for a single linear model with more than one predictor reports sequential Type I sums of squares. ...</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit</span>, beg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>For linear models with more than one predictor, <code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova()</a></code> reports sequential Type I sums of squares. These depend on the order of terms in the formula, so <code>honestlm</code> stops by default. Use <code>car::Anova(model, type = 2)</code> for term-level tests, or <code>anova(fit, beg = TRUE)</code> if you really want the Type I table.</p>
 </div>
 <div class="section level2">
 <h2 id="broom-methods">Broom methods<a class="anchor" aria-label="anchor" href="#broom-methods"></a>
@@ -117,6 +120,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://github.com/yanivjb/honestlm" class="external-link">View on GitHub</a></li>
 <li><a href="https://github.com/yanivjb/honestlm/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/yanivjb/honestlm/issues" class="external-link">Report a bug</a></li>
 </ul>

@@ -61,17 +61,22 @@ coefficient rows are comparisons to a reference level, not tests of
 whether each category or the whole predictor matters. The summary also
 points readers toward estimated marginal means for post-hoc comparisons.
 
-## Sequential sums of squares warning
+## Sequential sums of squares guardrail
 
 ``` r
 
 anova(fit)
+#> Error: `anova()` for a single linear model with more than one predictor reports sequential Type I sums of squares. ...
+
+anova(fit, beg = TRUE)
 ```
 
-For linear models, [`anova()`](https://rdrr.io/r/stats/anova.html)
-reports sequential Type I sums of squares. These depend on the order of
-terms in the formula. `honestlm` leaves the table intact but warns about
-that interpretation trap.
+For linear models with more than one predictor,
+[`anova()`](https://rdrr.io/r/stats/anova.html) reports sequential Type
+I sums of squares. These depend on the order of terms in the formula, so
+`honestlm` stops by default. Use `car::Anova(model, type = 2)` for
+term-level tests, or `anova(fit, beg = TRUE)` if you really want the
+Type I table.
 
 ## Broom methods
 

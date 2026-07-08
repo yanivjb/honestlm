@@ -4,18 +4,22 @@
 \alias{anova.honest_lm}
 \title{Analysis of variance for a guarded linear model}
 \usage{
-\method{anova}{honest_lm}(object, ...)
+\method{anova}{honest_lm}(object, ..., beg = FALSE)
 }
 \arguments{
 \item{object}{An \code{honest_lm} object.}
 
 \item{...}{Passed to \code{\link[stats:anova]{stats::anova()}}.}
+
+\item{beg}{Logical. Set to \code{TRUE} to explicitly request sequential Type I
+sums of squares for a model with more than one predictor.}
 }
 \value{
 An ANOVA table with an extra class for printing.
 }
 \description{
-This method returns the same sequential ANOVA table as \code{\link[stats:anova.lm]{stats::anova.lm()}},
-but warns that these are Type I sums of squares and therefore depend on term
-order.
+For a single predictor, this method returns the usual ANOVA table from
+\code{\link[stats:anova.lm]{stats::anova.lm()}}. For models with more than one predictor, it stops by
+default because that table uses sequential Type I sums of squares, which
+depend on the order of terms in the formula.
 }
