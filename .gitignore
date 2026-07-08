@@ -5,3 +5,6 @@
 .DS_Store
 *.tar.gz
 *.Rcheck/
+
+data-viz-chapter-rewrite.qmd
+viz-models-honestlm-rewrite.qmd

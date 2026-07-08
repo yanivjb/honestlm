@@ -40,3 +40,20 @@ test_that("stat_lm_means tolerates one-level faceted panels", {
 
   expect_s3_class(suppressWarnings(ggplot2::ggplot_build(plot)), "ggplot_built")
 })
+
+test_that("geom_lm_smooth tolerates facets that split the grouping variable", {
+  plot <- ggplot2::ggplot(
+    mtcars,
+    ggplot2::aes(wt, mpg, colour = factor(cyl))
+  ) +
+    ggplot2::geom_point() +
+    geom_lm_smooth() +
+    ggplot2::facet_wrap(~cyl)
+
+  expect_warning(
+    built <- ggplot2::ggplot_build(plot),
+    NA
+  )
+  expect_s3_class(built, "ggplot_built")
+  expect_true(nrow(built$data[[2]]) > 0)
+})

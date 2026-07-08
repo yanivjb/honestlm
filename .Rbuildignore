@@ -5,3 +5,6 @@
 ^honestlm\.Rproj$
 ^_pkgdown\.yml$
 ^docs$
+
+^data-viz-chapter-rewrite\.qmd$
+^viz-models-honestlm-rewrite\.qmd$

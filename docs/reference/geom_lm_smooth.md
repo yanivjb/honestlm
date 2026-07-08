@@ -2,8 +2,8 @@
 
 `geom_lm_smooth()` is a linear-model smoother for grouped data. By
 default, `interaction = FALSE`, it fits one slope with group offsets
-(`y ~ x + group`) inside each panel. With `interaction = TRUE`, it
-delegates to
+(`y ~ x + group`) across the layer, then draws the relevant additive fit
+in each panel. With `interaction = TRUE`, it delegates to
 [`ggplot2::geom_smooth()`](https://ggplot2.tidyverse.org/reference/geom_smooth.html)
 with `method = "lm"` for ordinary separate grouped slopes.
 

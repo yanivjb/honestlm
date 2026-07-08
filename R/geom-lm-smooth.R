@@ -2,7 +2,7 @@
 #'
 #' `geom_lm_smooth()` is a linear-model smoother for grouped data. By default,
 #' `interaction = FALSE`, it fits one slope with group offsets (`y ~ x + group`)
-#' inside each panel. With `interaction = TRUE`, it delegates to
+#' across the layer, then draws the relevant additive fit in each panel. With `interaction = TRUE`, it delegates to
 #' [ggplot2::geom_smooth()] with `method = "lm"` for ordinary separate grouped
 #' slopes.
 #'
@@ -73,8 +73,12 @@ StatLmSmooth <- ggplot2::ggproto(
   required_aes = c("x", "y"),
   extra_params = c("na.rm", "se", "level", "n", "fullrange"),
 
-  compute_panel = function(data, scales, se = TRUE, level = 0.95,
-                           n = 100, fullrange = FALSE, na.rm = FALSE) {
+  compute_layer = function(self, data, params, layout) {
+    se <- params$se %||% TRUE
+    level <- params$level %||% 0.95
+    n <- params$n %||% 100
+    fullrange <- params$fullrange %||% FALSE
+
     keep <- stats::complete.cases(data[, c("x", "y", "group")])
     data <- data[keep, , drop = FALSE]
 
@@ -99,14 +103,17 @@ StatLmSmooth <- ggplot2::ggproto(
       names(data)
     )
     x_global <- range(data$x, na.rm = TRUE)
-    groups <- sort(unique(data$group))
+    panel_group_combos <- unique(data[, c("PANEL", "group"), drop = FALSE])
 
-    grid <- lapply(groups, function(this_group) {
-      this_data <- data[data$group == this_group, , drop = FALSE]
+    grid <- lapply(seq_len(nrow(panel_group_combos)), function(i) {
+      this_panel <- panel_group_combos$PANEL[i]
+      this_group <- panel_group_combos$group[i]
+      this_data <- data[data$PANEL == this_panel & data$group == this_group, , drop = FALSE]
       x_range <- if (isTRUE(fullrange)) x_global else range(this_data$x, na.rm = TRUE)
 
       pred_data <- data.frame(
         x = seq(x_range[1], x_range[2], length.out = n),
+        PANEL = this_panel,
         group = this_group
       )
       pred_data$.lm_group <- factor(this_group, levels = levels(data$.lm_group))
