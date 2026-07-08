@@ -26,20 +26,20 @@ library(honestlm)
 ## Summaries
 
 `honest_lm()` fits a regular `lm()` object with an extra class. The estimates
-are ordinary linear-model estimates, but the printed summary hides coefficient
-p-values by default.
+are ordinary linear-model estimates, but the printed summary treats coefficient
+p-values cautiously.
 
 ```{r summary}
 fit <- honest_lm(mpg ~ wt + factor(cyl), data = mtcars)
 summary(fit)
 ```
 
-For categorical predictors with more than two levels, coefficient rows are
-comparisons to a reference level. They are not separate tests of whether each
-category, or the whole predictor, matters. If p-values are shown, the
-intercept p-value stays hidden unless you ask for `intercept_p_value = TRUE`.
-For post-hoc comparisons among levels, estimated marginal means are usually a
-better tool.
+By default, `summary()` shows p-values for continuous predictors and two-level
+categorical predictors, but prints `NA` for intercept p-values and multi-level
+categorical contrast rows. Those multi-level rows are comparisons to a reference
+level, not separate tests of whether each category, or the whole predictor,
+matters. For post-hoc comparisons among levels, estimated marginal means are
+usually a better tool.
 
 ## Sequential sums of squares
 

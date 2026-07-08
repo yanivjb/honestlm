@@ -20,8 +20,8 @@ tidy.honest_lm <- function(x, ..., p_values = NULL) {
     )
   }
 
-  p_values <- p_values %||% x$honest_lm_p_values %||% "hide"
-  p_values <- match.arg(p_values, c("hide", "warn", "show"))
+  p_values <- p_values %||% x$honest_lm_p_values %||% "honest"
+  p_values <- match.arg(p_values, c("honest", "hide", "warn", "show"))
 
   lm_x <- x
   class(lm_x) <- setdiff(class(lm_x), "honest_lm")
@@ -29,6 +29,12 @@ tidy.honest_lm <- function(x, ..., p_values = NULL) {
 
   if (identical(p_values, "hide") && "p.value" %in% names(out)) {
     out$p.value <- NULL
+  }
+
+  if (identical(p_values, "honest") && "p.value" %in% names(out)) {
+    intercept_row <- out$term == "(Intercept)"
+    multilevel_rows <- honest_multilevel_factor_rows(x, out$term)
+    out$p.value[intercept_row | multilevel_rows] <- NA_real_
   }
 
   out$contrast_note <- honest_contrast_notes(x, out$term)
@@ -68,14 +74,14 @@ glance.honest_lm <- function(x, ..., p_values = NULL) {
     )
   }
 
-  p_values <- p_values %||% x$honest_lm_p_values %||% "hide"
-  p_values <- match.arg(p_values, c("hide", "warn", "show"))
+  p_values <- p_values %||% x$honest_lm_p_values %||% "honest"
+  p_values <- match.arg(p_values, c("honest", "hide", "warn", "show"))
 
   lm_x <- x
   class(lm_x) <- setdiff(class(lm_x), "honest_lm")
   out <- broom::glance(lm_x, ...)
 
-  if (identical(p_values, "hide")) {
+  if (identical(p_values, "hide") || identical(p_values, "honest")) {
     p_cols <- intersect("p.value", names(out))
     out[p_cols] <- NULL
   }

@@ -1,11 +1,11 @@
 # Summarize a guarded linear model
 
 This method keeps the familiar shape of
-[`summary.lm()`](https://rdrr.io/r/stats/summary.lm.html) but hides
-coefficient p-values by default. If the model contains a categorical
-predictor with more than two levels, printing the summary warns that its
-coefficient rows are comparisons to a reference level, not tests of
-whether each category or the overall predictor matters.
+[`summary.lm()`](https://rdrr.io/r/stats/summary.lm.html) but treats
+coefficient p-values cautiously. The default `p_values = "honest"` shows
+p-values for continuous predictors and two-level categorical predictors,
+but hides intercept p-values and multi-level categorical contrast
+p-values with `NA`. Notes explain what was hidden.
 
 ## Usage
 

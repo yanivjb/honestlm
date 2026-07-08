@@ -31,6 +31,25 @@ honest_factor_info <- function(model) {
   )
 }
 
+honest_multilevel_factor_rows <- function(model, terms) {
+  factor_info <- honest_factor_info(model)
+  rows <- rep(FALSE, length(terms))
+
+  if (length(factor_info) == 0) {
+    return(rows)
+  }
+
+  for (info in factor_info) {
+    if (info$n_levels <= 2) {
+      next
+    }
+
+    rows <- rows | (startsWith(terms, info$name) & terms != info$name)
+  }
+
+  rows
+}
+
 honest_contrast_notes <- function(model, terms) {
   factor_info <- honest_factor_info(model)
   notes <- rep(NA_character_, length(terms))

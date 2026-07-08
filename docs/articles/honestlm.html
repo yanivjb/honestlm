@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">honestlm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@ guardrails around common interpretation traps.</p>
 </h2>
 <p><code><a href="../reference/honest_lm.html">honest_lm()</a></code> fits a regular <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> object with
 an extra class. The estimates are ordinary linear-model estimates, but
-the printed summary hides coefficient p-values by default.</p>
+the printed summary treats coefficient p-values cautiously.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/honest_lm.html">honest_lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
@@ -79,31 +79,33 @@ the printed summary hides coefficient p-values by default.</p>
 <span><span class="co">#&gt; -4.5890 -1.2357 -0.5159  1.3845  5.7915 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   33.9908     1.8878  18.006</span></span>
-<span><span class="co">#&gt; wt            -3.2056     0.7539  -4.252</span></span>
-<span><span class="co">#&gt; factor(cyl)6  -4.2556     1.3861  -3.070</span></span>
-<span><span class="co">#&gt; factor(cyl)8  -6.0709     1.6523  -3.674</span></span>
+<span><span class="co">#&gt;              Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; (Intercept)   33.9908     1.8878  18.006       NA    </span></span>
+<span><span class="co">#&gt; wt            -3.2056     0.7539  -4.252 0.000213 ***</span></span>
+<span><span class="co">#&gt; factor(cyl)6  -4.2556     1.3861  -3.070       NA    </span></span>
+<span><span class="co">#&gt; factor(cyl)8  -6.0709     1.6523  -3.674       NA    </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Categorical predictors:</span></span>
 <span><span class="co">#&gt;   factor(cyl): 3 levels; reference level = 4</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Notes:</span></span>
-<span><span class="co">#&gt;   * Coefficient p-values are hidden by default. Use p_values = "warn" or "show" if you really want them.</span></span>
+<span><span class="co">#&gt;   * Intercept p-values are hidden because they usually test whether the expected response is zero at the reference condition. Use intercept_p_value = TRUE if you really want them.</span></span>
+<span><span class="co">#&gt;   * When present, p-values are shown for continuous predictors and two-level categorical predictors.</span></span>
+<span><span class="co">#&gt;   * P-values for multi-level categorical coefficient rows are hidden by default because those rows compare levels to a reference level, not whether the overall predictor matters.</span></span>
 <span><span class="co">#&gt;   * For post-hoc comparisons among factor levels, consider estimated marginal means, e.g. emmeans::emmeans() and pairs(). See https://rvlenth.github.io/emmeans/.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residual standard error: 2.557 on 28 degrees of freedom</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.8374, Adjusted R-squared:  0.82</span></span>
-<span><span class="co">#&gt; F-statistic: 48.08 on 3 and 28 DF  (model-level p-value hidden)</span></span>
-<span><span class="co">#&gt; Warning: `factor(cyl)` has 3 levels. The coefficient rows for `factor(cyl)` are</span></span>
-<span><span class="co">#&gt; comparisons to the reference level `4`, not tests of whether each category or</span></span>
-<span><span class="co">#&gt; the overall predictor matters.</span></span></code></pre></div>
-<p>For categorical predictors with more than two levels, coefficient
-rows are comparisons to a reference level. They are not separate tests
-of whether each category, or the whole predictor, matters. If p-values
-are shown, the intercept p-value stays hidden unless you ask for
-<code>intercept_p_value = TRUE</code>. For post-hoc comparisons among
-levels, estimated marginal means are usually a better tool.</p>
+<span><span class="co">#&gt; F-statistic: 48.08 on 3 and 28 DF  (model-level p-value hidden)</span></span></code></pre></div>
+<p>By default, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> shows p-values for continuous
+predictors and two-level categorical predictors, but prints
+<code>NA</code> for intercept p-values and multi-level categorical
+contrast rows. Those multi-level rows are comparisons to a reference
+level, not separate tests of whether each category, or the whole
+predictor, matters. For post-hoc comparisons among levels, estimated
+marginal means are usually a better tool.</p>
 </div>
 <div class="section level2">
 <h2 id="sequential-sums-of-squares">Sequential sums of squares<a class="anchor" aria-label="anchor" href="#sequential-sums-of-squares"></a>
@@ -144,13 +146,13 @@ explicitly.</p>
 column for factor contrast rows.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 5</span></span></span>
-<span><span class="co">#&gt;   term         estimate std.error statistic contrast_note                       </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> (Intercept)     34.0      1.89      18.0  <span style="color: #BB0000;">NA</span>                                  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> wt              -<span style="color: #BB0000;">3.21</span>     0.754     -<span style="color: #BB0000;">4.25</span> <span style="color: #BB0000;">NA</span>                                  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> factor(cyl)6    -<span style="color: #BB0000;">4.26</span>     1.39      -<span style="color: #BB0000;">3.07</span> comparison to reference level `4`; …</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> factor(cyl)8    -<span style="color: #BB0000;">6.07</span>     1.65      -<span style="color: #BB0000;">3.67</span> comparison to reference level `4`; …</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 6</span></span></span>
+<span><span class="co">#&gt;   term         estimate std.error statistic   p.value contrast_note             </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> (Intercept)     34.0      1.89      18.0  <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> wt              -<span style="color: #BB0000;">3.21</span>     0.754     -<span style="color: #BB0000;">4.25</span>  0.000<span style="text-decoration: underline;">213</span> <span style="color: #BB0000;">NA</span>                        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> factor(cyl)6    -<span style="color: #BB0000;">4.26</span>     1.39      -<span style="color: #BB0000;">3.07</span> <span style="color: #BB0000;">NA</span>        comparison to reference l…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> factor(cyl)8    -<span style="color: #BB0000;">6.07</span>     1.65      -<span style="color: #BB0000;">3.67</span> <span style="color: #BB0000;">NA</span>        comparison to reference l…</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="model-aware-plots">Model-aware plots<a class="anchor" aria-label="anchor" href="#model-aware-plots"></a>

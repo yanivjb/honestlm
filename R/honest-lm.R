@@ -6,8 +6,10 @@
 #'
 #' @param formula,data,... Passed to [stats::lm()].
 #' @param p_values How p-values should be handled by honest methods. The default
-#'   `"hide"` suppresses p-value columns where possible. `"show"` includes them.
-#'   `"warn"` includes them and may warn about contrast interpretation.
+#'   `"honest"` shows simple p-values and uses `NA` for rows that are easy
+#'   to misread. `"hide"` suppresses p-value columns where possible.
+#'   `"show"` includes them. `"warn"` includes them and may warn about
+#'   contrast interpretation.
 #'
 #' @return An object with class `c("honest_lm", "lm")`.
 #' @export
@@ -15,7 +17,7 @@
 #' @examples
 #' fit <- honest_lm(mpg ~ wt + factor(cyl), data = mtcars)
 #' summary(fit)
-honest_lm <- function(formula, data, ..., p_values = c("hide", "warn", "show")) {
+honest_lm <- function(formula, data, ..., p_values = c("honest", "hide", "warn", "show")) {
   p_values <- match.arg(p_values)
   lm_call <- match.call(expand.dots = TRUE)
   lm_call$p_values <- NULL
@@ -47,9 +49,9 @@ as_honest_lm <- function(model, p_values = NULL) {
   }
 
   if (!is.null(p_values)) {
-    model$honest_lm_p_values <- match.arg(p_values, c("hide", "warn", "show"))
+    model$honest_lm_p_values <- match.arg(p_values, c("honest", "hide", "warn", "show"))
   } else if (is.null(model$honest_lm_p_values)) {
-    model$honest_lm_p_values <- "hide"
+    model$honest_lm_p_values <- "honest"
   }
 
   class(model) <- unique(c("honest_lm", class(model)))

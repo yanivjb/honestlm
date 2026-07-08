@@ -4,14 +4,16 @@
 \alias{honest_lm}
 \title{Fit a guarded linear model}
 \usage{
-honest_lm(formula, data, ..., p_values = c("hide", "warn", "show"))
+honest_lm(formula, data, ..., p_values = c("honest", "hide", "warn", "show"))
 }
 \arguments{
 \item{formula, data, ...}{Passed to \code{\link[stats:lm]{stats::lm()}}.}
 
 \item{p_values}{How p-values should be handled by honest methods. The default
-\code{"hide"} suppresses p-value columns where possible. \code{"show"} includes them.
-\code{"warn"} includes them and may warn about contrast interpretation.}
+\code{"honest"} shows simple p-values and uses \code{NA} for rows that are easy
+to misread. \code{"hide"} suppresses p-value columns where possible.
+\code{"show"} includes them. \code{"warn"} includes them and may warn about
+contrast interpretation.}
 }
 \value{
 An object with class \code{c("honest_lm", "lm")}.

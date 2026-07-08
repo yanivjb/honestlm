@@ -54,14 +54,12 @@ fit <- honest_lm(
 summary(fit)
 ```
 
-By default, coefficient p-values are hidden. For categorical predictors
-with more than two levels,
-[`summary()`](https://rdrr.io/r/base/summary.html) warns that the
-coefficient rows are comparisons to a reference level, not tests of
-whether each category or the whole predictor matters. If p-values are
-shown, the intercept p-value stays hidden unless you ask for
-`intercept_p_value = TRUE`. The summary also points readers toward
-estimated marginal means for post-hoc comparisons.
+By default, [`summary()`](https://rdrr.io/r/base/summary.html) uses
+honest p-values: it shows p-values for continuous predictors and
+two-level categorical predictors, but prints `NA` for intercept p-values
+and multi-level categorical contrast rows. Notes under the coefficient
+table explain what was hidden and point readers toward estimated
+marginal means for post-hoc comparisons.
 
 ## Sequential sums of squares guardrail
 

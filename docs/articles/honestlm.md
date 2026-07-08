@@ -14,7 +14,7 @@ library(honestlm)
 [`honest_lm()`](https://yanivjb.github.io/honestlm/reference/honest_lm.md)
 fits a regular [`lm()`](https://rdrr.io/r/stats/lm.html) object with an
 extra class. The estimates are ordinary linear-model estimates, but the
-printed summary hides coefficient p-values by default.
+printed summary treats coefficient p-values cautiously.
 
 ``` r
 
@@ -29,33 +29,35 @@ summary(fit)
 #> -4.5890 -1.2357 -0.5159  1.3845  5.7915 
 #> 
 #> Coefficients:
-#>              Estimate Std. Error t value
-#> (Intercept)   33.9908     1.8878  18.006
-#> wt            -3.2056     0.7539  -4.252
-#> factor(cyl)6  -4.2556     1.3861  -3.070
-#> factor(cyl)8  -6.0709     1.6523  -3.674
+#>              Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)   33.9908     1.8878  18.006       NA    
+#> wt            -3.2056     0.7539  -4.252 0.000213 ***
+#> factor(cyl)6  -4.2556     1.3861  -3.070       NA    
+#> factor(cyl)8  -6.0709     1.6523  -3.674       NA    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Categorical predictors:
 #>   factor(cyl): 3 levels; reference level = 4
 #> 
 #> Notes:
-#>   * Coefficient p-values are hidden by default. Use p_values = "warn" or "show" if you really want them.
+#>   * Intercept p-values are hidden because they usually test whether the expected response is zero at the reference condition. Use intercept_p_value = TRUE if you really want them.
+#>   * When present, p-values are shown for continuous predictors and two-level categorical predictors.
+#>   * P-values for multi-level categorical coefficient rows are hidden by default because those rows compare levels to a reference level, not whether the overall predictor matters.
 #>   * For post-hoc comparisons among factor levels, consider estimated marginal means, e.g. emmeans::emmeans() and pairs(). See https://rvlenth.github.io/emmeans/.
 #> 
 #> Residual standard error: 2.557 on 28 degrees of freedom
 #> Multiple R-squared:  0.8374, Adjusted R-squared:  0.82
 #> F-statistic: 48.08 on 3 and 28 DF  (model-level p-value hidden)
-#> Warning: `factor(cyl)` has 3 levels. The coefficient rows for `factor(cyl)` are
-#> comparisons to the reference level `4`, not tests of whether each category or
-#> the overall predictor matters.
 ```
 
-For categorical predictors with more than two levels, coefficient rows
-are comparisons to a reference level. They are not separate tests of
-whether each category, or the whole predictor, matters. If p-values are
-shown, the intercept p-value stays hidden unless you ask for
-`intercept_p_value = TRUE`. For post-hoc comparisons among levels,
-estimated marginal means are usually a better tool.
+By default, [`summary()`](https://rdrr.io/r/base/summary.html) shows
+p-values for continuous predictors and two-level categorical predictors,
+but prints `NA` for intercept p-values and multi-level categorical
+contrast rows. Those multi-level rows are comparisons to a reference
+level, not separate tests of whether each category, or the whole
+predictor, matters. For post-hoc comparisons among levels, estimated
+marginal means are usually a better tool.
 
 ## Sequential sums of squares
 
@@ -102,13 +104,13 @@ contrast rows.
 ``` r
 
 broom::tidy(fit)
-#> # A tibble: 4 × 5
-#>   term         estimate std.error statistic contrast_note                       
-#>   <chr>           <dbl>     <dbl>     <dbl> <chr>                               
-#> 1 (Intercept)     34.0      1.89      18.0  NA                                  
-#> 2 wt              -3.21     0.754     -4.25 NA                                  
-#> 3 factor(cyl)6    -4.26     1.39      -3.07 comparison to reference level `4`; …
-#> 4 factor(cyl)8    -6.07     1.65      -3.67 comparison to reference level `4`; …
+#> # A tibble: 4 × 6
+#>   term         estimate std.error statistic   p.value contrast_note             
+#>   <chr>           <dbl>     <dbl>     <dbl>     <dbl> <chr>                     
+#> 1 (Intercept)     34.0      1.89      18.0  NA        NA                        
+#> 2 wt              -3.21     0.754     -4.25  0.000213 NA                        
+#> 3 factor(cyl)6    -4.26     1.39      -3.07 NA        comparison to reference l…
+#> 4 factor(cyl)8    -6.07     1.65      -3.67 NA        comparison to reference l…
 ```
 
 ## Model-aware plots

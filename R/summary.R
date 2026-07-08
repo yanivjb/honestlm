@@ -1,10 +1,10 @@
 #' Summarize a guarded linear model
 #'
-#' This method keeps the familiar shape of [summary.lm()] but hides coefficient
-#' p-values by default. If the model contains a categorical predictor with more
-#' than two levels, printing the summary warns that its coefficient rows are
-#' comparisons to a reference level, not tests of whether each category or the
-#' overall predictor matters.
+#' This method keeps the familiar shape of [summary.lm()] but treats coefficient
+#' p-values cautiously. The default `p_values = "honest"` shows p-values
+#' for continuous predictors and two-level categorical predictors, but hides
+#' intercept p-values and multi-level categorical contrast p-values with `NA`.
+#' Notes explain what was hidden.
 #'
 #' @param object An `honest_lm` object.
 #' @param ... Unused.
@@ -20,8 +20,8 @@ summary.honest_lm <- function(object,
                               conf.level = 0.95,
                               p_values = NULL,
                               intercept_p_value = FALSE) {
-  p_values <- p_values %||% object$honest_lm_p_values %||% "hide"
-  p_values <- match.arg(p_values, c("hide", "warn", "show"))
+  p_values <- p_values %||% object$honest_lm_p_values %||% "honest"
+  p_values <- match.arg(p_values, c("honest", "hide", "warn", "show"))
 
   lm_summary <- NextMethod("summary")
   coef_table <- stats::coef(lm_summary)
@@ -31,18 +31,24 @@ summary.honest_lm <- function(object,
     term = rownames(coef_table),
     estimate = unname(coef_table[, "Estimate"]),
     std.error = unname(coef_table[, "Std. Error"]),
+    statistic = unname(coef_table[, "t value"]),
     conf.low = unname(ci[rownames(coef_table), 1]),
     conf.high = unname(ci[rownames(coef_table), 2]),
     stringsAsFactors = FALSE
   )
 
-  if (identical(p_values, "show") || identical(p_values, "warn")) {
-    coef_out$statistic <- unname(coef_table[, "t value"])
+  if (!identical(p_values, "hide")) {
     coef_out$p.value <- unname(coef_table[, "Pr(>|t|)"])
 
     intercept_row <- coef_out$term == "(Intercept)"
+    multilevel_rows <- honest_multilevel_factor_rows(object, coef_out$term)
+
     if (any(intercept_row) && !isTRUE(intercept_p_value)) {
       coef_out$p.value[intercept_row] <- NA_real_
+    }
+
+    if (identical(p_values, "honest")) {
+      coef_out$p.value[multilevel_rows] <- NA_real_
     }
   }
 
@@ -50,19 +56,35 @@ summary.honest_lm <- function(object,
   notes <- character()
   warnings <- character()
 
+  has_intercept <- any(coef_out$term == "(Intercept)")
+  has_p_values <- "p.value" %in% names(coef_out)
+
   if (identical(p_values, "hide")) {
     notes <- c(
       notes,
-      "Coefficient p-values are hidden by default. Use p_values = \"warn\" or \"show\" if you really want them."
+      "Coefficient p-values are hidden. Use p_values = \"honest\" to show simple p-values, or p_values = \"show\" if you really want all coefficient p-values."
+    )
+  }
+
+  if (has_p_values && has_intercept && !isTRUE(intercept_p_value)) {
+    notes <- c(
+      notes,
+      "Intercept p-values are hidden because they usually test whether the expected response is zero at the reference condition. Use intercept_p_value = TRUE if you really want them."
     )
   }
 
   if ((identical(p_values, "show") || identical(p_values, "warn")) &&
-      !isTRUE(intercept_p_value) &&
-      any(coef_out$term == "(Intercept)")) {
+      has_p_values && has_intercept && !isTRUE(intercept_p_value)) {
     warnings <- c(
       warnings,
-      "The intercept p-value is hidden because it tests whether the expected response is zero when numeric predictors equal zero and categorical predictors are at their reference levels. Use intercept_p_value = TRUE if you really want it."
+      "The intercept p-value is hidden because it usually tests whether the expected response is zero at the reference condition. Use intercept_p_value = TRUE if you really want it."
+    )
+  }
+
+  if (identical(p_values, "honest") && has_p_values) {
+    notes <- c(
+      notes,
+      "When present, p-values are shown for continuous predictors and two-level categorical predictors."
     )
   }
 
@@ -75,24 +97,27 @@ summary.honest_lm <- function(object,
   if (length(multilevel_factors) > 0) {
     notes <- c(
       notes,
+      "P-values for multi-level categorical coefficient rows are hidden by default because those rows compare levels to a reference level, not whether the overall predictor matters.",
       "For post-hoc comparisons among factor levels, consider estimated marginal means, e.g. emmeans::emmeans() and pairs(). See https://rvlenth.github.io/emmeans/."
     )
 
-    warnings <- c(
-      warnings,
-      vapply(
-        multilevel_factors,
-        function(x) {
-          paste0(
-            "`", x$name, "` has ", x$n_levels, " levels. The coefficient rows ",
-            "for `", x$name, "` are comparisons to the reference level `",
-            x$reference, "`, not tests of whether each category or the overall ",
-            "predictor matters."
-          )
-        },
-        character(1)
+    if (identical(p_values, "show") || identical(p_values, "warn")) {
+      warnings <- c(
+        warnings,
+        vapply(
+          multilevel_factors,
+          function(x) {
+            paste0(
+              "`", x$name, "` has ", x$n_levels, " levels. The coefficient rows ",
+              "for `", x$name, "` are comparisons to the reference level `",
+              x$reference, "`, not tests of whether each category or the overall ",
+              "predictor matters."
+            )
+          },
+          character(1)
+        )
       )
-    )
+    }
   }
 
   aliased <- names(stats::coef(object))[is.na(stats::coef(object))]
@@ -146,16 +171,19 @@ print.summary_honest_lm <- function(x, digits = max(3, getOption("digits") - 3),
   print(residual_quantiles, digits = digits)
 
   cat("\nCoefficients:\n")
-  coefs <- as.matrix(lm_summary$coefficients)
-  if (identical(x$p_values, "hide")) {
-    coefs <- coefs[, c("Estimate", "Std. Error", "t value"), drop = FALSE]
-    stats::printCoefmat(coefs, digits = digits, signif.stars = FALSE)
-  } else {
-    intercept_row <- rownames(coefs) == "(Intercept)"
-    if (any(intercept_row) && !isTRUE(x$intercept_p_value)) {
-      coefs[intercept_row, "Pr(>|t|)"] <- NA_real_
-    }
+  coefs <- x$coefficients
+  if ("p.value" %in% names(coefs)) {
+    coefs <- coefs[, c("estimate", "std.error", "statistic", "p.value"), drop = FALSE]
+    names(coefs) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+    coefs <- as.matrix(coefs)
+    rownames(coefs) <- x$coefficients$term
     stats::printCoefmat(coefs, digits = digits, signif.stars = TRUE)
+  } else {
+    coefs <- coefs[, c("estimate", "std.error", "statistic"), drop = FALSE]
+    names(coefs) <- c("Estimate", "Std. Error", "t value")
+    coefs <- as.matrix(coefs)
+    rownames(coefs) <- x$coefficients$term
+    stats::printCoefmat(coefs, digits = digits, signif.stars = FALSE)
   }
 
   if (length(x$factor_info) > 0) {
@@ -211,7 +239,7 @@ print.summary_honest_lm <- function(x, digits = max(3, getOption("digits") - 3),
       " DF",
       sep = ""
     )
-    if (identical(x$p_values, "hide")) {
+    if (identical(x$p_values, "hide") || identical(x$p_values, "honest")) {
       cat("  (model-level p-value hidden)\n")
     } else {
       p_value <- stats::pf(fstat["value"], fstat["numdf"], fstat["dendf"], lower.tail = FALSE)

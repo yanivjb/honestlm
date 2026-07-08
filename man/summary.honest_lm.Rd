@@ -28,9 +28,9 @@ p-value when coefficient p-values are shown.}
 A \code{summary_honest_lm} object.
 }
 \description{
-This method keeps the familiar shape of \code{\link[=summary.lm]{summary.lm()}} but hides coefficient
-p-values by default. If the model contains a categorical predictor with more
-than two levels, printing the summary warns that its coefficient rows are
-comparisons to a reference level, not tests of whether each category or the
-overall predictor matters.
+This method keeps the familiar shape of \code{\link[=summary.lm]{summary.lm()}} but treats coefficient
+p-values cautiously. The default \code{p_values = "honest"} shows p-values
+for continuous predictors and two-level categorical predictors, but hides
+intercept p-values and multi-level categorical contrast p-values with \code{NA}.
+Notes explain what was hidden.
 }
