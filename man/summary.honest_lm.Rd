@@ -4,7 +4,13 @@
 \alias{summary.honest_lm}
 \title{Summarize a guarded linear model}
 \usage{
-\method{summary}{honest_lm}(object, ..., conf.level = 0.95, p_values = NULL)
+\method{summary}{honest_lm}(
+  object,
+  ...,
+  conf.level = 0.95,
+  p_values = NULL,
+  intercept_p_value = FALSE
+)
 }
 \arguments{
 \item{object}{An \code{honest_lm} object.}
@@ -14,6 +20,9 @@
 \item{conf.level}{Confidence level used for stored confidence intervals.}
 
 \item{p_values}{Optional p-value policy. See \code{honest_lm()}.}
+
+\item{intercept_p_value}{Logical. Set to \code{TRUE} to show the intercept
+p-value when coefficient p-values are shown.}
 }
 \value{
 A \code{summary_honest_lm} object.

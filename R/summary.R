@@ -10,13 +10,16 @@
 #' @param ... Unused.
 #' @param conf.level Confidence level used for stored confidence intervals.
 #' @param p_values Optional p-value policy. See `honest_lm()`.
+#' @param intercept_p_value Logical. Set to `TRUE` to show the intercept
+#'   p-value when coefficient p-values are shown.
 #'
 #' @return A `summary_honest_lm` object.
 #' @export
 summary.honest_lm <- function(object,
                               ...,
                               conf.level = 0.95,
-                              p_values = NULL) {
+                              p_values = NULL,
+                              intercept_p_value = FALSE) {
   p_values <- p_values %||% object$honest_lm_p_values %||% "hide"
   p_values <- match.arg(p_values, c("hide", "warn", "show"))
 
@@ -36,6 +39,11 @@ summary.honest_lm <- function(object,
   if (identical(p_values, "show") || identical(p_values, "warn")) {
     coef_out$statistic <- unname(coef_table[, "t value"])
     coef_out$p.value <- unname(coef_table[, "Pr(>|t|)"])
+
+    intercept_row <- coef_out$term == "(Intercept)"
+    if (any(intercept_row) && !isTRUE(intercept_p_value)) {
+      coef_out$p.value[intercept_row] <- NA_real_
+    }
   }
 
   factor_info <- honest_factor_info(object)
@@ -46,6 +54,15 @@ summary.honest_lm <- function(object,
     notes <- c(
       notes,
       "Coefficient p-values are hidden by default. Use p_values = \"warn\" or \"show\" if you really want them."
+    )
+  }
+
+  if ((identical(p_values, "show") || identical(p_values, "warn")) &&
+      !isTRUE(intercept_p_value) &&
+      any(coef_out$term == "(Intercept)")) {
+    warnings <- c(
+      warnings,
+      "The intercept p-value is hidden because it tests whether the expected response is zero when numeric predictors equal zero and categorical predictors are at their reference levels. Use intercept_p_value = TRUE if you really want it."
     )
   }
 
@@ -102,6 +119,7 @@ summary.honest_lm <- function(object,
     factor_info = factor_info,
     p_values = p_values,
     conf.level = conf.level,
+    intercept_p_value = intercept_p_value,
     notes = unique(notes),
     warnings = unique(warnings),
     lm_summary = lm_summary
@@ -133,6 +151,10 @@ print.summary_honest_lm <- function(x, digits = max(3, getOption("digits") - 3),
     coefs <- coefs[, c("Estimate", "Std. Error", "t value"), drop = FALSE]
     stats::printCoefmat(coefs, digits = digits, signif.stars = FALSE)
   } else {
+    intercept_row <- rownames(coefs) == "(Intercept)"
+    if (any(intercept_row) && !isTRUE(x$intercept_p_value)) {
+      coefs[intercept_row, "Pr(>|t|)"] <- NA_real_
+    }
     stats::printCoefmat(coefs, digits = digits, signif.stars = TRUE)
   }
 

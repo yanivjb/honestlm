@@ -58,8 +58,10 @@ By default, coefficient p-values are hidden. For categorical predictors
 with more than two levels,
 [`summary()`](https://rdrr.io/r/base/summary.html) warns that the
 coefficient rows are comparisons to a reference level, not tests of
-whether each category or the whole predictor matters. The summary also
-points readers toward estimated marginal means for post-hoc comparisons.
+whether each category or the whole predictor matters. If p-values are
+shown, the intercept p-value stays hidden unless you ask for
+`intercept_p_value = TRUE`. The summary also points readers toward
+estimated marginal means for post-hoc comparisons.
 
 ## Sequential sums of squares guardrail
 

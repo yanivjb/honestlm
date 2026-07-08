@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">honestlm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,9 +99,10 @@ the printed summary hides coefficient p-values by default.</p>
 <span><span class="co">#&gt; the overall predictor matters.</span></span></code></pre></div>
 <p>For categorical predictors with more than two levels, coefficient
 rows are comparisons to a reference level. They are not separate tests
-of whether each category, or the whole predictor, matters. For post-hoc
-comparisons among levels, estimated marginal means are usually a better
-tool.</p>
+of whether each category, or the whole predictor, matters. If p-values
+are shown, the intercept p-value stays hidden unless you ask for
+<code>intercept_p_value = TRUE</code>. For post-hoc comparisons among
+levels, estimated marginal means are usually a better tool.</p>
 </div>
 <div class="section level2">
 <h2 id="sequential-sums-of-squares">Sequential sums of squares<a class="anchor" aria-label="anchor" href="#sequential-sums-of-squares"></a>

@@ -29,3 +29,32 @@ test_that("printing summary does not warn for two-level factors", {
 
   expect_warning(print(summary(fit)), NA)
 })
+
+test_that("summary hides intercept p-value even when coefficient p-values are shown", {
+  fit <- honest_lm(mpg ~ wt, data = mtcars)
+  out <- summary(fit, p_values = "show")
+
+  intercept_row <- out$coefficients$term == "(Intercept)"
+  slope_row <- out$coefficients$term == "wt"
+
+  expect_true(is.na(out$coefficients$p.value[intercept_row]))
+  expect_false(is.na(out$coefficients$p.value[slope_row]))
+  expect_warning(
+    invisible(utils::capture.output(print(out))),
+    "intercept p-value is hidden",
+    fixed = TRUE
+  )
+})
+
+test_that("summary can show intercept p-value when explicitly requested", {
+  fit <- honest_lm(mpg ~ wt, data = mtcars)
+  out <- summary(fit, p_values = "show", intercept_p_value = TRUE)
+
+  intercept_row <- out$coefficients$term == "(Intercept)"
+
+  expect_false(is.na(out$coefficients$p.value[intercept_row]))
+  expect_warning(
+    invisible(utils::capture.output(print(out))),
+    NA
+  )
+})

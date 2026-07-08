@@ -36,8 +36,10 @@ summary(fit)
 
 For categorical predictors with more than two levels, coefficient rows are
 comparisons to a reference level. They are not separate tests of whether each
-category, or the whole predictor, matters. For post-hoc comparisons among
-levels, estimated marginal means are usually a better tool.
+category, or the whole predictor, matters. If p-values are shown, the
+intercept p-value stays hidden unless you ask for `intercept_p_value = TRUE`.
+For post-hoc comparisons among levels, estimated marginal means are usually a
+better tool.
 
 ## Sequential sums of squares
 

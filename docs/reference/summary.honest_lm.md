@@ -11,7 +11,13 @@ whether each category or the overall predictor matters.
 
 ``` r
 # S3 method for class 'honest_lm'
-summary(object, ..., conf.level = 0.95, p_values = NULL)
+summary(
+  object,
+  ...,
+  conf.level = 0.95,
+  p_values = NULL,
+  intercept_p_value = FALSE
+)
 ```
 
 ## Arguments
@@ -32,6 +38,11 @@ summary(object, ..., conf.level = 0.95, p_values = NULL)
 
   Optional p-value policy. See
   [`honest_lm()`](https://yanivjb.github.io/honestlm/reference/honest_lm.md).
+
+- intercept_p_value:
+
+  Logical. Set to `TRUE` to show the intercept p-value when coefficient
+  p-values are shown.
 
 ## Value
 

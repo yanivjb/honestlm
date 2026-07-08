@@ -15,7 +15,7 @@ overall predictor matters."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">honestlm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,13 @@ overall predictor matters.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'honest_lm'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span>, conf.level <span class="op">=</span> <span class="fl">0.95</span>, p_values <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  conf.level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  p_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  intercept_p_value <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -71,6 +77,11 @@ overall predictor matters.</p>
 
 <dt id="arg-p-values">p_values<a class="anchor" aria-label="anchor" href="#arg-p-values"></a></dt>
 <dd><p>Optional p-value policy. See <code><a href="honest_lm.html">honest_lm()</a></code>.</p></dd>
+
+
+<dt id="arg-intercept-p-value">intercept_p_value<a class="anchor" aria-label="anchor" href="#arg-intercept-p-value"></a></dt>
+<dd><p>Logical. Set to <code>TRUE</code> to show the intercept
+p-value when coefficient p-values are shown.</p></dd>
 
 </dl></div>
     <div class="section level2">
