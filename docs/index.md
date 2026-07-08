@@ -13,6 +13,42 @@ verbs like [`summary()`](https://rdrr.io/r/base/summary.html),
 ggplot2 layers, but changes the defaults where the usual output invites
 overreading.
 
+## Why honestlm?
+
+`honestlm` is built for teaching introductory biostatistics. After years
+of teaching linear models, I kept seeing the same misunderstandings:
+students overread coefficient p-values, treat multi-level categorical
+contrasts as tests of whole predictors, interpret intercept tests that
+answer no useful biological question, use Type I sums of squares without
+noticing term order, and draw plots that imply a different model than
+the one they fit.
+
+These mistakes are not just student mistakes. They are partly produced
+by software defaults. `honestlm` keeps the familiar
+[`lm()`](https://rdrr.io/r/stats/lm.html) workflow, but changes the
+defaults at the places where beginners are most likely to learn the
+wrong lesson.
+
+The main function is
+[`honest_lm()`](https://yanivjb.github.io/honestlm/reference/honest_lm.md).
+It fits an ordinary [`stats::lm()`](https://rdrr.io/r/stats/lm.html)
+model, then adds an `honest_lm` class. The model is still a linear
+model, but methods like
+[`summary()`](https://rdrr.io/r/base/summary.html),
+[`anova()`](https://rdrr.io/r/stats/anova.html), and
+[`broom::tidy()`](https://generics.r-lib.org/reference/tidy.html) use
+more cautious defaults: misleading p-values are printed as `NA` with
+notes, accidental multi-predictor Type I ANOVA is blocked, and contrast
+rows are labeled more explicitly.
+
+The package also adds plotting helpers for model-aware visualization.
+[`geom_lm_smooth()`](https://yanivjb.github.io/honestlm/reference/geom_lm_smooth.md)
+draws additive, parallel fitted lines by default, and
+[`stat_lm_means()`](https://yanivjb.github.io/honestlm/reference/stat_lm_means.md)
+draws model-predicted means. These are meant to help plots match the
+model students are actually fitting, especially before introducing
+interactions.
+
 ## Install
 
 Install the development version from GitHub:
@@ -88,8 +124,8 @@ tidy(fit)
 glance(fit)
 ```
 
-[`tidy()`](https://generics.r-lib.org/reference/tidy.html) removes
-`p.value` by default and adds a `contrast_note` column for factor
+[`tidy()`](https://generics.r-lib.org/reference/tidy.html) uses honest
+p-values by default and adds a `contrast_note` column for factor
 contrasts.
 [`glance()`](https://generics.r-lib.org/reference/glance.html) removes
 the model-level `p.value` by default.
