@@ -19,7 +19,8 @@
 #'   `.adjusted_<x>` and `.adjusted_<y>`.
 #'
 #' @return A tibble with added residualized columns. Attributes record the
-#'   original response, focal predictor, and adjustment variables.
+#'   original response, focal predictor, adjustment variables, and residual
+#'   formulas used for plot labels.
 #' @export
 #'
 #' @examples
@@ -27,7 +28,8 @@
 #'
 #' ggplot2::ggplot(av_data, ggplot2::aes(.adjusted_wt, .adjusted_mpg)) +
 #'   ggplot2::geom_point() +
-#'   ggplot2::geom_smooth(method = "lm")
+#'   ggplot2::geom_smooth(method = "lm") +
+#'   av_labs(av_data)
 av_transform <- function(data, y, x, adjust = NULL, names = NULL) {
   data <- as.data.frame(data)
 
@@ -156,10 +158,43 @@ av_adjust_piece_name <- function(piece) {
   }
 }
 
+#' Labels for an added-variable plot
+#'
+#' `av_labs()` returns ggplot2 axis labels that describe the residual models used
+#' by [av_transform()].
+#'
+#' @param data A data frame returned by [av_transform()].
+#'
+#' @return A ggplot2 labels object.
+#' @export
+#'
+#' @examples
+#' av_data <- av_transform(mtcars, y = mpg, x = wt, adjust = c(hp, factor(cyl)))
+#'
+#' ggplot2::ggplot(av_data, ggplot2::aes(.adjusted_wt, .adjusted_mpg)) +
+#'   ggplot2::geom_point() +
+#'   av_labs(av_data)
+av_labs <- function(data) {
+  x_label <- attr(data, "av_x_label", exact = TRUE)
+  y_label <- attr(data, "av_y_label", exact = TRUE)
+
+  if (is.null(x_label) || is.null(y_label)) {
+    stop("`data` must be returned by `av_transform()`.", call. = FALSE)
+  }
+
+  ggplot2::labs(x = x_label, y = y_label)
+}
+
 av_add_attributes <- function(data, y, x, adjust, names) {
+  adjust_formula <- if (length(adjust) == 0) "1" else paste(adjust, collapse = " + ")
+  x_label <- paste0("resid(", x, " ~ ", adjust_formula, ")")
+  y_label <- paste0("resid(", y, " ~ ", adjust_formula, ")")
+
   attr(data, "av_y") <- y
   attr(data, "av_x") <- x
   attr(data, "av_adjust") <- adjust
   attr(data, "av_names") <- names
+  attr(data, "av_x_label") <- x_label
+  attr(data, "av_y_label") <- y_label
   data
 }

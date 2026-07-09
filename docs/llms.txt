@@ -171,13 +171,17 @@ av_penguins <- av_transform(
 
 ggplot(av_penguins, aes(.adjusted_bill_depth_mm, .adjusted_bill_length_mm)) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  av_labs(av_penguins)
 ```
 
 [`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
 returns a tibble with adjusted versions of the focal predictor and
-response, named from the original variables. This keeps the
-added-variable plot as a regular ggplot workflow.
+response, named from the original variables.
+[`av_labs()`](https://yanivjb.github.io/honestlm/reference/av_labs.md)
+labels the axes with the residual models used to make those adjusted
+variables. This keeps the added-variable plot as a regular ggplot
+workflow.
 
 # Package index
 
@@ -187,6 +191,8 @@ added-variable plot as a regular ggplot workflow.
   : Analysis of variance for a guarded linear model
 - [`as_honest_lm()`](https://yanivjb.github.io/honestlm/reference/as_honest_lm.md)
   : Add honest linear model behavior to an existing model
+- [`av_labs()`](https://yanivjb.github.io/honestlm/reference/av_labs.md)
+  : Labels for an added-variable plot
 - [`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
   : Residualize variables for an added-variable plot
 - [`geom_lm_smooth()`](https://yanivjb.github.io/honestlm/reference/geom_lm_smooth.md)

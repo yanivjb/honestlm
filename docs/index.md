@@ -171,10 +171,14 @@ av_penguins <- av_transform(
 
 ggplot(av_penguins, aes(.adjusted_bill_depth_mm, .adjusted_bill_length_mm)) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  av_labs(av_penguins)
 ```
 
 [`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
 returns a tibble with adjusted versions of the focal predictor and
-response, named from the original variables. This keeps the
-added-variable plot as a regular ggplot workflow.
+response, named from the original variables.
+[`av_labs()`](https://yanivjb.github.io/honestlm/reference/av_labs.md)
+labels the axes with the residual models used to make those adjusted
+variables. This keeps the added-variable plot as a regular ggplot
+workflow.

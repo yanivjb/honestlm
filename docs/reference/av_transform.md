@@ -43,7 +43,8 @@ av_transform(data, y, x, adjust = NULL, names = NULL)
 ## Value
 
 A tibble with added residualized columns. Attributes record the original
-response, focal predictor, and adjustment variables.
+response, focal predictor, adjustment variables, and residual formulas
+used for plot labels.
 
 ## Examples
 
@@ -52,6 +53,7 @@ av_data <- av_transform(mtcars, y = mpg, x = wt, adjust = c(hp, factor(cyl)))
 
 ggplot2::ggplot(av_data, ggplot2::aes(.adjusted_wt, .adjusted_mpg)) +
   ggplot2::geom_point() +
-  ggplot2::geom_smooth(method = "lm")
+  ggplot2::geom_smooth(method = "lm") +
+  av_labs(av_data)
 #> `geom_smooth()` using formula = 'y ~ x'
 ```

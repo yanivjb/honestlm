@@ -11,6 +11,8 @@ test_that("av_transform returns residualized columns whose slope matches lm coef
   expect_equal(attr(av_data, "av_y"), "mpg")
   expect_equal(attr(av_data, "av_x"), "wt")
   expect_equal(attr(av_data, "av_adjust"), c("hp", "factor(cyl)"))
+  expect_equal(attr(av_data, "av_x_label"), "resid(wt ~ hp + factor(cyl))")
+  expect_equal(attr(av_data, "av_y_label"), "resid(mpg ~ hp + factor(cyl))")
 
   full_fit <- stats::lm(mpg ~ wt + hp + factor(cyl), data = mtcars)
   av_fit <- stats::lm(.adjusted_mpg ~ .adjusted_wt, data = av_data)
@@ -71,4 +73,20 @@ test_that("av_transform supports custom names", {
   expect_s3_class(av_data, "tbl_df")
   expect_true(all(c("x_adjusted", "y_adjusted") %in% names(av_data)))
   expect_equal(attr(av_data, "av_names"), c("x_adjusted", "y_adjusted"))
+})
+
+
+test_that("av_labs returns residual formula labels for ggplot", {
+  av_data <- av_transform(
+    mtcars,
+    y = mpg,
+    x = wt,
+    adjust = c(hp, factor(cyl))
+  )
+
+  labels <- av_labs(av_data)
+
+  expect_equal(labels$x, "resid(wt ~ hp + factor(cyl))")
+  expect_equal(labels$y, "resid(mpg ~ hp + factor(cyl))")
+  expect_error(av_labs(mtcars), "returned by `av_transform\\(\\)`")
 })
