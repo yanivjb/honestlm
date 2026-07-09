@@ -9,6 +9,7 @@ geom_lm_smooth(
   data = NULL,
   ...,
   interaction = FALSE,
+  method = NULL,
   se = TRUE,
   level = 0.95,
   n = 100,
@@ -69,6 +70,9 @@ lists which parameters it can accept.
 
 \item{interaction}{Should the grouped smooth use separate slopes? The default
 \code{FALSE} draws additive/parallel linear-model smooths.}
+
+\item{method}{Ignored compatibility argument. \code{geom_lm_smooth()} always uses
+linear models; \code{method = "lm"} is accepted silently.}
 
 \item{se}{Display confidence band around smooth? (\code{TRUE} by default, see
 \code{level} to control.)}

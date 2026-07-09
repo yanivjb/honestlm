@@ -16,6 +16,7 @@ geom_lm_smooth(
   data = NULL,
   ...,
   interaction = FALSE,
+  method = NULL,
   se = TRUE,
   level = 0.95,
   n = 100,
@@ -96,6 +97,11 @@ geom_lm_smooth(
 
   Should the grouped smooth use separate slopes? The default `FALSE`
   draws additive/parallel linear-model smooths.
+
+- method:
+
+  Ignored compatibility argument. `geom_lm_smooth()` always uses linear
+  models; `method = "lm"` is accepted silently.
 
 - se:
 

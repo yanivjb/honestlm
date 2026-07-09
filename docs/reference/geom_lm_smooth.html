@@ -17,7 +17,7 @@ method = "lm" for ordinary separate grouped slopes.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">honestlm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@ across the layer, then draws the relevant additive fit in each panel. With
 <span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  interaction <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  se <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">100</span>,</span>
@@ -123,6 +124,11 @@ lists which parameters it can accept.</p></li>
 <dt id="arg-interaction">interaction<a class="anchor" aria-label="anchor" href="#arg-interaction"></a></dt>
 <dd><p>Should the grouped smooth use separate slopes? The default
 <code>FALSE</code> draws additive/parallel linear-model smooths.</p></dd>
+
+
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
+<dd><p>Ignored compatibility argument. <code>geom_lm_smooth()</code> always uses
+linear models; <code>method = "lm"</code> is accepted silently.</p></dd>
 
 
 <dt id="arg-se">se<a class="anchor" aria-label="anchor" href="#arg-se"></a></dt>

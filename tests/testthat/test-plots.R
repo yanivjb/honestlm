@@ -74,3 +74,25 @@ test_that("geom_lm_smooth draws a single lm line without groups", {
   expect_true(nrow(built$data[[2]]) > 0)
   expect_equal(length(unique(built$data[[2]]$group)), 1)
 })
+
+
+test_that("geom_lm_smooth accepts method lm as a quiet compatibility argument", {
+  plot <- ggplot2::ggplot(
+    mtcars,
+    ggplot2::aes(wt, mpg)
+  ) +
+    geom_lm_smooth(method = "lm")
+
+  expect_warning(
+    built <- ggplot2::ggplot_build(plot),
+    NA
+  )
+  expect_s3_class(built, "ggplot_built")
+})
+
+test_that("geom_lm_smooth warns for non-lm method requests", {
+  expect_warning(
+    geom_lm_smooth(method = "loess"),
+    "always uses linear models"
+  )
+})

@@ -9,6 +9,8 @@
 #' @inheritParams ggplot2::geom_smooth
 #' @param interaction Should the grouped smooth use separate slopes? The default
 #'   `FALSE` draws additive/parallel linear-model smooths.
+#' @param method Ignored compatibility argument. `geom_lm_smooth()` always uses
+#'   linear models; `method = "lm"` is accepted silently.
 #'
 #' @return A ggplot2 layer.
 #' @export
@@ -23,6 +25,7 @@ geom_lm_smooth <- function(mapping = NULL,
                            data = NULL,
                            ...,
                            interaction = FALSE,
+                           method = NULL,
                            se = TRUE,
                            level = 0.95,
                            n = 100,
@@ -30,6 +33,15 @@ geom_lm_smooth <- function(mapping = NULL,
                            na.rm = FALSE,
                            show.legend = NA,
                            inherit.aes = TRUE) {
+  if (!is.null(method) && !identical(method, "lm")) {
+    warning(
+      "`geom_lm_smooth()` always uses linear models; ignoring `method = ",
+      deparse(method),
+      "`.",
+      call. = FALSE
+    )
+  }
+
   if (isTRUE(interaction)) {
     return(ggplot2::geom_smooth(
       mapping = mapping,
