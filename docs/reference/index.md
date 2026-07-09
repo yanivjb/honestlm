@@ -6,6 +6,8 @@
   : Analysis of variance for a guarded linear model
 - [`as_honest_lm()`](https://yanivjb.github.io/honestlm/reference/as_honest_lm.md)
   : Add honest linear model behavior to an existing model
+- [`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
+  : Residualize variables for an added-variable plot
 - [`geom_lm_smooth()`](https://yanivjb.github.io/honestlm/reference/geom_lm_smooth.md)
   : Linear-model smooths with additive slopes by default
 - [`glance(`*`<honest_lm>`*`)`](https://yanivjb.github.io/honestlm/reference/glance.honest_lm.md)

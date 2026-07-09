@@ -158,6 +158,27 @@ draws model-predicted means rather than raw grouped means. This helps
 plots follow the same additive or interaction structure as the linear
 model.
 
+## Added-variable transformations
+
+``` r
+
+av_penguins <- av_transform(
+  penguins,
+  y = bill_length_mm,
+  x = bill_depth_mm,
+  adjust = species
+)
+
+ggplot(av_penguins, aes(.av_x, .av_y)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+[`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
+returns the original data with `.av_x` and `.av_y`, the focal predictor
+and response after adjusting for the other variables. This keeps the
+added-variable plot as a regular ggplot workflow.
+
 # Package index
 
 ## All functions
@@ -166,6 +187,8 @@ model.
   : Analysis of variance for a guarded linear model
 - [`as_honest_lm()`](https://yanivjb.github.io/honestlm/reference/as_honest_lm.md)
   : Add honest linear model behavior to an existing model
+- [`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
+  : Residualize variables for an added-variable plot
 - [`geom_lm_smooth()`](https://yanivjb.github.io/honestlm/reference/geom_lm_smooth.md)
   : Linear-model smooths with additive slopes by default
 - [`glance(`*`<honest_lm>`*`)`](https://yanivjb.github.io/honestlm/reference/glance.honest_lm.md)

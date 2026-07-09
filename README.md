@@ -127,3 +127,22 @@ ggplot(penguins, aes(island, bill_length_mm, colour = species)) +
 `stat_lm_means()` draws model-predicted means rather than raw grouped means.
 This helps plots follow the same additive or interaction structure as the
 linear model.
+
+## Added-variable transformations
+
+```r
+av_penguins <- av_transform(
+  penguins,
+  y = bill_length_mm,
+  x = bill_depth_mm,
+  adjust = species
+)
+
+ggplot(av_penguins, aes(.av_x, .av_y)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+`av_transform()` returns the original data with `.av_x` and `.av_y`, the
+focal predictor and response after adjusting for the other variables. This
+keeps the added-variable plot as a regular ggplot workflow.
