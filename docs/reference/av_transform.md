@@ -2,15 +2,15 @@
 
 `av_transform()` creates the two residualized variables used in an
 added-variable, or partial-regression, plot. It returns the original
-data with two new columns: `.av_x`, the focal predictor after adjusting
-for the other variables, and `.av_y`, the response after adjusting for
-the same variables. The result can be plotted with ordinary ggplot2
-layers.
+data with two new columns named from the focal predictor and response,
+such as `.adjusted_asd_mm` and `.adjusted_prop_hybrid`. These are the
+focal predictor and response after adjusting for the same variables. The
+result can be plotted with ordinary ggplot2 layers.
 
 ## Usage
 
 ``` r
-av_transform(data, y, x, adjust = NULL, names = c(".av_x", ".av_y"))
+av_transform(data, y, x, adjust = NULL, names = NULL)
 ```
 
 ## Arguments
@@ -35,21 +35,22 @@ av_transform(data, y, x, adjust = NULL, names = c(".av_x", ".av_y"))
 
 - names:
 
-  Names of the residualized columns to add. The first name is used for
-  the residualized focal predictor and the second for the residualized
-  response.
+  Optional names of the residualized columns to add. The first name is
+  used for the residualized focal predictor and the second for the
+  residualized response. If `NULL`, names are created automatically as
+  `.adjusted_<x>` and `.adjusted_<y>`.
 
 ## Value
 
-A data frame with added residualized columns. Attributes record the
-original response, focal predictor, and adjustment variables.
+A tibble with added residualized columns. Attributes record the original
+response, focal predictor, and adjustment variables.
 
 ## Examples
 
 ``` r
 av_data <- av_transform(mtcars, y = mpg, x = wt, adjust = c(hp, factor(cyl)))
 
-ggplot2::ggplot(av_data, ggplot2::aes(.av_x, .av_y)) +
+ggplot2::ggplot(av_data, ggplot2::aes(.adjusted_wt, .adjusted_mpg)) +
   ggplot2::geom_point() +
   ggplot2::geom_smooth(method = "lm")
 #> `geom_smooth()` using formula = 'y ~ x'

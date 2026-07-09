@@ -2,9 +2,10 @@
 #'
 #' `av_transform()` creates the two residualized variables used in an
 #' added-variable, or partial-regression, plot. It returns the original data with
-#' two new columns: `.av_x`, the focal predictor after adjusting for the other
-#' variables, and `.av_y`, the response after adjusting for the same variables.
-#' The result can be plotted with ordinary ggplot2 layers.
+#' two new columns named from the focal predictor and response, such as
+#' `.adjusted_asd_mm` and `.adjusted_prop_hybrid`. These are the focal predictor
+#' and response after adjusting for the same variables. The result can be plotted
+#' with ordinary ggplot2 layers.
 #'
 #' @param data A data frame.
 #' @param y Response variable. Use an unquoted column name or a single string.
@@ -12,29 +13,33 @@
 #'   string.
 #' @param adjust Adjustment variables. Use `c(var1, var2)` with unquoted column
 #'   names, a single unquoted column name, a character vector, or `NULL`.
-#' @param names Names of the residualized columns to add. The first name is used
-#'   for the residualized focal predictor and the second for the residualized
-#'   response.
+#' @param names Optional names of the residualized columns to add. The first name
+#'   is used for the residualized focal predictor and the second for the
+#'   residualized response. If `NULL`, names are created automatically as
+#'   `.adjusted_<x>` and `.adjusted_<y>`.
 #'
-#' @return A data frame with added residualized columns. Attributes record the
+#' @return A tibble with added residualized columns. Attributes record the
 #'   original response, focal predictor, and adjustment variables.
 #' @export
 #'
 #' @examples
 #' av_data <- av_transform(mtcars, y = mpg, x = wt, adjust = c(hp, factor(cyl)))
 #'
-#' ggplot2::ggplot(av_data, ggplot2::aes(.av_x, .av_y)) +
+#' ggplot2::ggplot(av_data, ggplot2::aes(.adjusted_wt, .adjusted_mpg)) +
 #'   ggplot2::geom_point() +
 #'   ggplot2::geom_smooth(method = "lm")
-av_transform <- function(data, y, x, adjust = NULL, names = c(".av_x", ".av_y")) {
+av_transform <- function(data, y, x, adjust = NULL, names = NULL) {
   data <- as.data.frame(data)
 
   y_name <- av_variable_name(substitute(y), data, "y")
   x_name <- av_variable_name(substitute(x), data, "x")
   adjust_names <- av_adjust_names(substitute(adjust), data)
 
+  if (is.null(names)) {
+    names <- paste0(".adjusted_", c(x_name, y_name))
+  }
   if (length(names) != 2 || any(is.na(names)) || any(names == "")) {
-    stop("`names` must be a character vector of two non-empty column names.", call. = FALSE)
+    stop("`names` must be NULL or a character vector of two non-empty column names.", call. = FALSE)
   }
   if (any(names %in% names(data))) {
     stop("`names` would overwrite existing columns in `data`.", call. = FALSE)
@@ -60,7 +65,7 @@ av_transform <- function(data, y, x, adjust = NULL, names = c(".av_x", ".av_y"))
   }
 
   keep <- stats::complete.cases(data[, model_vars, drop = FALSE])
-  out <- data
+  out <- tibble::as_tibble(data)
   out[[names[1]]] <- NA_real_
   out[[names[2]]] <- NA_real_
 

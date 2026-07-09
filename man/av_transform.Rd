@@ -4,7 +4,7 @@
 \alias{av_transform}
 \title{Residualize variables for an added-variable plot}
 \usage{
-av_transform(data, y, x, adjust = NULL, names = c(".av_x", ".av_y"))
+av_transform(data, y, x, adjust = NULL, names = NULL)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -17,25 +17,27 @@ string.}
 \item{adjust}{Adjustment variables. Use \code{c(var1, var2)} with unquoted column
 names, a single unquoted column name, a character vector, or \code{NULL}.}
 
-\item{names}{Names of the residualized columns to add. The first name is used
-for the residualized focal predictor and the second for the residualized
-response.}
+\item{names}{Optional names of the residualized columns to add. The first name
+is used for the residualized focal predictor and the second for the
+residualized response. If \code{NULL}, names are created automatically as
+\verb{.adjusted_<x>} and \verb{.adjusted_<y>}.}
 }
 \value{
-A data frame with added residualized columns. Attributes record the
+A tibble with added residualized columns. Attributes record the
 original response, focal predictor, and adjustment variables.
 }
 \description{
 \code{av_transform()} creates the two residualized variables used in an
 added-variable, or partial-regression, plot. It returns the original data with
-two new columns: \code{.av_x}, the focal predictor after adjusting for the other
-variables, and \code{.av_y}, the response after adjusting for the same variables.
-The result can be plotted with ordinary ggplot2 layers.
+two new columns named from the focal predictor and response, such as
+\code{.adjusted_asd_mm} and \code{.adjusted_prop_hybrid}. These are the focal predictor
+and response after adjusting for the same variables. The result can be plotted
+with ordinary ggplot2 layers.
 }
 \examples{
 av_data <- av_transform(mtcars, y = mpg, x = wt, adjust = c(hp, factor(cyl)))
 
-ggplot2::ggplot(av_data, ggplot2::aes(.av_x, .av_y)) +
+ggplot2::ggplot(av_data, ggplot2::aes(.adjusted_wt, .adjusted_mpg)) +
   ggplot2::geom_point() +
   ggplot2::geom_smooth(method = "lm")
 }

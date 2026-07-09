@@ -169,14 +169,14 @@ av_penguins <- av_transform(
   adjust = species
 )
 
-ggplot(av_penguins, aes(.av_x, .av_y)) +
+ggplot(av_penguins, aes(.adjusted_bill_depth_mm, .adjusted_bill_length_mm)) +
   geom_point() +
   geom_smooth(method = "lm")
 ```
 
 [`av_transform()`](https://yanivjb.github.io/honestlm/reference/av_transform.md)
-returns the original data with `.av_x` and `.av_y`, the focal predictor
-and response after adjusting for the other variables. This keeps the
+returns a tibble with adjusted versions of the focal predictor and
+response, named from the original variables. This keeps the
 added-variable plot as a regular ggplot workflow.
 
 # Package index
