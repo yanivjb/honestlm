@@ -1,7 +1,8 @@
 # Linear-model smooths with additive slopes by default
 
-`geom_lm_smooth()` is a linear-model smoother for grouped data. By
-default, `interaction = FALSE`, it fits one slope with group offsets
+`geom_lm_smooth()` is a linear-model smoother. For ungrouped plots it
+draws the ordinary `y ~ x` linear fit. For grouped plots, the default
+`interaction = FALSE` fits one slope with group offsets
 (`y ~ x + group`) across the layer, then draws the relevant additive fit
 in each panel. With `interaction = TRUE`, it delegates to
 [`ggplot2::geom_smooth()`](https://ggplot2.tidyverse.org/reference/geom_smooth.html)

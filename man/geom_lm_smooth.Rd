@@ -101,11 +101,12 @@ the default plot specification, e.g. \code{\link[ggplot2:annotation_borders]{ann
 A ggplot2 layer.
 }
 \description{
-\code{geom_lm_smooth()} is a linear-model smoother for grouped data. By default,
-\code{interaction = FALSE}, it fits one slope with group offsets (\code{y ~ x + group})
-across the layer, then draws the relevant additive fit in each panel. With \code{interaction = TRUE}, it delegates to
-\code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}} with \code{method = "lm"} for ordinary separate grouped
-slopes.
+\code{geom_lm_smooth()} is a linear-model smoother. For ungrouped plots it draws
+the ordinary \code{y ~ x} linear fit. For grouped plots, the default
+\code{interaction = FALSE} fits one slope with group offsets (\code{y ~ x + group})
+across the layer, then draws the relevant additive fit in each panel. With
+\code{interaction = TRUE}, it delegates to \code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}} with
+\code{method = "lm"} for ordinary separate grouped slopes.
 }
 \examples{
 library(ggplot2)

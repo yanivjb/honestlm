@@ -1,11 +1,11 @@
 #' Linear-model smooths with additive slopes by default
 #'
-#' `geom_lm_smooth()` is a linear-model smoother for grouped data. By default,
-#' `interaction = FALSE`, it fits one slope with group offsets (`y ~ x + group`)
-#' across the layer, then draws the relevant additive fit in each panel. With `interaction = TRUE`, it delegates to
-#' [ggplot2::geom_smooth()] with `method = "lm"` for ordinary separate grouped
-#' slopes.
-#'
+#' `geom_lm_smooth()` is a linear-model smoother. For ungrouped plots it draws
+#' the ordinary `y ~ x` linear fit. For grouped plots, the default
+#' `interaction = FALSE` fits one slope with group offsets (`y ~ x + group`)
+#' across the layer, then draws the relevant additive fit in each panel. With
+#' `interaction = TRUE`, it delegates to [ggplot2::geom_smooth()] with
+#' `method = "lm"` for ordinary separate grouped slopes.
 #' @inheritParams ggplot2::geom_smooth
 #' @param interaction Should the grouped smooth use separate slopes? The default
 #'   `FALSE` draws additive/parallel linear-model smooths.
@@ -86,13 +86,47 @@ StatLmSmooth <- ggplot2::ggproto(
       return(data[0, , drop = FALSE])
     }
 
-    if (!"group" %in% names(data) || length(unique(data$group)) < 2) {
-      warning(
-        "`geom_lm_smooth(interaction = FALSE)` needs a grouping aesthetic ",
-        "with more than one value. Try mapping colour, linetype, or group.",
-        call. = FALSE
+    has_groups <- "group" %in% names(data) && length(unique(data$group)) >= 2
+
+    if (!has_groups) {
+      fit <- stats::lm(y ~ x, data = data)
+
+      aesthetic_cols <- intersect(
+        c("colour", "color", "fill", "alpha", "linetype", "linewidth", "size"),
+        names(data)
       )
-      return(data[0, , drop = FALSE])
+      x_global <- range(data$x, na.rm = TRUE)
+      panels <- unique(data$PANEL)
+
+      grid <- lapply(panels, function(this_panel) {
+        this_data <- data[data$PANEL == this_panel, , drop = FALSE]
+        x_range <- if (isTRUE(fullrange)) x_global else range(this_data$x, na.rm = TRUE)
+
+        pred_data <- data.frame(
+          x = seq(x_range[1], x_range[2], length.out = n),
+          PANEL = this_panel,
+          group = -1
+        )
+
+        for (aesthetic in aesthetic_cols) {
+          pred_data[[aesthetic]] <- this_data[[aesthetic]][1]
+        }
+
+        pred_data
+      })
+
+      pred_data <- do.call(rbind, grid)
+      pred <- stats::predict(fit, newdata = pred_data, se.fit = TRUE)
+      pred_data$y <- as.numeric(pred$fit)
+
+      if (isTRUE(se)) {
+        crit <- stats::qt((1 + level) / 2, df = stats::df.residual(fit))
+        pred_data$se <- as.numeric(pred$se.fit)
+        pred_data$ymin <- pred_data$y - crit * pred_data$se
+        pred_data$ymax <- pred_data$y + crit * pred_data$se
+      }
+
+      return(pred_data)
     }
 
     data$.lm_group <- factor(data$group)

@@ -57,3 +57,20 @@ test_that("geom_lm_smooth tolerates facets that split the grouping variable", {
   expect_s3_class(built, "ggplot_built")
   expect_true(nrow(built$data[[2]]) > 0)
 })
+
+test_that("geom_lm_smooth draws a single lm line without groups", {
+  plot <- ggplot2::ggplot(
+    mtcars,
+    ggplot2::aes(wt, mpg)
+  ) +
+    ggplot2::geom_point() +
+    geom_lm_smooth()
+
+  expect_warning(
+    built <- ggplot2::ggplot_build(plot),
+    NA
+  )
+  expect_s3_class(built, "ggplot_built")
+  expect_true(nrow(built$data[[2]]) > 0)
+  expect_equal(length(unique(built$data[[2]]$group)), 1)
+})

@@ -1,6 +1,6 @@
 Package: honestlm
 Title: Guardrails for Teaching Linear Models
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R:
     person("Yaniv", "Brandvain", role = c("aut", "cre"),
            email = "ybrandva@umn.edu")
