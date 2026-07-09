@@ -96,3 +96,37 @@ test_that("geom_lm_smooth warns for non-lm method requests", {
     "always uses linear models"
   )
 })
+
+
+test_that("stat_lm_means uses one additive fit across facets", {
+  df <- data.frame(
+    x = rep(c("a", "b", "a", "b"), each = 2),
+    facet = rep(c("p1", "p1", "p2", "p2"), each = 2),
+    y = c(0, 0, 10, 10, 100, 100, 130, 130)
+  )
+
+  plot <- ggplot2::ggplot(df, ggplot2::aes(x, y, colour = x)) +
+    stat_lm_means() +
+    ggplot2::facet_wrap(~facet)
+
+  built <- ggplot2::ggplot_build(plot)
+  stat_data <- built$data[[1]]
+
+  model_data <- data.frame(
+    y = df$y,
+    x_num = factor(as.numeric(factor(df$x))),
+    panel = factor(as.numeric(factor(df$facet)))
+  )
+  fit <- stats::lm(y ~ x_num + panel, data = model_data)
+  expected <- expand.grid(
+    x_num = levels(model_data$x_num),
+    panel = levels(model_data$panel)
+  )
+  expected$y <- as.numeric(stats::predict(fit, newdata = expected))
+
+  stat_data <- stat_data[order(stat_data$PANEL, stat_data$x), ]
+  expected <- expected[order(expected$panel, expected$x_num), ]
+
+  expect_equal(stat_data$y, expected$y, tolerance = 1e-10)
+  expect_false(all(stat_data$y %in% c(0, 10, 100, 130)))
+})
