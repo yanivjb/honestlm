@@ -201,6 +201,8 @@ workflow.
   : Glance at a guarded linear model
 - [`honest_lm()`](https://yanivjb.github.io/honestlm/reference/honest_lm.md)
   : Fit a guarded linear model
+- [`partial_r2()`](https://yanivjb.github.io/honestlm/reference/partial_r2.md)
+  : Term-level partial R-squared and Cohen's f-squared
 - [`stat_lm_means()`](https://yanivjb.github.io/honestlm/reference/stat_lm_means.md)
   : Model-predicted means for categorical displays
 - [`summary(`*`<honest_lm>`*`)`](https://yanivjb.github.io/honestlm/reference/summary.honest_lm.md)
